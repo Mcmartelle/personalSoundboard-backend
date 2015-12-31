@@ -1,0 +1,31 @@
+{
+  "name": "matthew",
+  "version": "1.0.0",
+  "description": "personal soundboard backend",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "cookie-parser": "^1.4.0",
+    "ejs": "^2.3.4",
+    "express": "^4.13.3",
+    "express-session": "^1.12.1",
+    "passport": "^0.3.2",
+    "passport-facebook": "^2.0.0",
+    "passport-http": "^0.3.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mcmartelle/personalSoundboard-backend.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mcmartelle/personalSoundboard-backend/issues"
+  },
+  "homepage": "https://github.com/Mcmartelle/personalSoundboard-backend#readme"
+}
