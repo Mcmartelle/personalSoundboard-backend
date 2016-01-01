@@ -9,6 +9,7 @@ var expressSession = require('express-session');
 var passport = require('passport');
 var passportLocal = require('passport-local');
 var passportHttp = require('passport-http');
+var passportFacebook = require('passport-facebook');
 
 var app = express();
 
@@ -16,6 +17,11 @@ var server = https.createServer({
   cert: fs.readFileSync(__dirname + '/my.crt'),
   key: fs.readFileSync(__dirname + '/my.key')
 }, app);
+
+var fb = {
+  id: fs.readFileSync(__dirname + '/fb.id', 'utf8'),
+  secret: fs.readFileSync(__dirname + '/fb.secret', 'utf8')
+};
 
 app.set('view engine', 'ejs');
 
@@ -35,6 +41,25 @@ app.use(passport.session());
 passport.use(new passportLocal.Strategy(verifyCredentials));
 
 passport.use(new passportHttp.BasicStrategy(verifyCredentials));
+
+passport.use(new passportFacebook.Strategy({
+    clientID: fb.id,
+    clientSecret: fb.secret,
+    callbackURL: "http://www.matthewmartelle.com/MEANstack/personalSoundboard/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    User.findOrCreate(..., function(err, user) {
+      if (err) {
+        return done(err);
+      }
+      done(null, user);
+    });
+  }
+
+
+));
+
+
 
 function verifyCredentials(username, password, done) {
   //pretend this is using a real database
@@ -88,6 +113,14 @@ app.get('/logout', function(req, res) {
   req.logout();
   res.redirect('/');
 });
+
+app.get('/auth/facebook', passport.authenticate('facebook'));
+
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {
+    successRedirect: '/',
+    failureRedirect: '/login'
+  }));
 
 app.use('/api', passport.authenticate('basic', {
   session: false
