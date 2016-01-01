@@ -5,6 +5,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
+var mongoose = require('mongoose');
 
 var passport = require('passport');
 var passportLocal = require('passport-local');
@@ -42,22 +43,20 @@ passport.use(new passportLocal.Strategy(verifyCredentials));
 
 passport.use(new passportHttp.BasicStrategy(verifyCredentials));
 
-passport.use(new passportFacebook.Strategy({
-    clientID: fb.id,
-    clientSecret: fb.secret,
-    callbackURL: "http://www.matthewmartelle.com/MEANstack/personalSoundboard/auth/facebook/callback"
-  },
-  function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate(..., function(err, user) {
-      if (err) {
-        return done(err);
-      }
-      done(null, user);
-    });
-  }
-
-
-));
+// passport.use(new passportFacebook.Strategy({
+//     clientID: fb.id,
+//     clientSecret: fb.secret,
+//     callbackURL: "http://www.matthewmartelle.com/MEANstack/personalSoundboard/auth/facebook/callback"
+//   },
+//   function(accessToken, refreshToken, profile, done) {
+//     User.findOrCreate(..., function(err, user) {
+//       if (err) {
+//         return done(err);
+//       }
+//       done(null, user);
+//     });
+//   }
+// ));
 
 
 
@@ -114,13 +113,13 @@ app.get('/logout', function(req, res) {
   res.redirect('/');
 });
 
-app.get('/auth/facebook', passport.authenticate('facebook'));
+// app.get('/auth/facebook', passport.authenticate('facebook'));
 
-app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {
-    successRedirect: '/',
-    failureRedirect: '/login'
-  }));
+// app.get('/auth/facebook/callback',
+//   passport.authenticate('facebook', {
+//     successRedirect: '/',
+//     failureRedirect: '/login'
+//   }));
 
 app.use('/api', passport.authenticate('basic', {
   session: false
