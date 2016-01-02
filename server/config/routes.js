@@ -10,10 +10,8 @@ module.exports = function(app) {
   app.get('/', function(req, res) {
     res.render('index.html');
   });
-  // app.get('/api/', personsController.readAll);
-  // app.get('/api/new/:name/', personsController.create);
-  // app.get('/api/:name/', personsController.readOne);
-  // app.get('/api/remove/:name/', personsController.destroy);
+
+  app.post('/register', usersController.create); //not restful.. this is to get around the authentification for '/api'
 
   app.get('/api/users/', usersController.readAll);
   app.get('/api/users/:id/', usersController.readOne);

@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
+
 module.exports = {
 
   readAll: function(req, res) {

@@ -9,16 +9,16 @@ var mongoose = require('mongoose');
 
 var passport = require('passport');
 var passportLocal = require('passport-local');
-// var passportHttp = require('passport-http');
+var passportHttp = require('passport-http');
 // var passportFacebook = require('passport-facebook');
 
 var app = express();
 
 // server for SSL and passportHttp
-// var server = https.createServer({
-//   cert: fs.readFileSync(__dirname + '/my.crt'),
-//   key: fs.readFileSync(__dirname + '/my.key')
-// }, app);
+var server = https.createServer({
+  cert: fs.readFileSync(__dirname + '/my.crt'),
+  key: fs.readFileSync(__dirname + '/my.key')
+}, app);
 
 // So fb app id and secret aren't in public repository
 // var fb = {
@@ -42,11 +42,13 @@ app.use(expressSession({
   saveUninitialized: false
 }));
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+
+//////for COR without SSL//////
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
 
 
 app.use(passport.initialize());
@@ -54,7 +56,7 @@ app.use(passport.session());
 
 // passport strategies
 passport.use(new passportLocal.Strategy(verifyCredentials));
-// passport.use(new passportHttp.BasicStrategy(verifyCredentials));
+passport.use(new passportHttp.BasicStrategy(verifyCredentials));
 
 // passport.use(new passportFacebook.Strategy({
 //     clientID: fb.id,
@@ -71,17 +73,54 @@ passport.use(new passportLocal.Strategy(verifyCredentials));
 //   }
 // ));
 
+//// CORS with SSL ////
+app.use('*', function(req, res, next) {
+  /**
+   * Response settings
+   * @type {Object}
+   */
+  var responseSettings = {
+    "AccessControlAllowOrigin": req.headers.origin,
+    "AccessControlAllowHeaders": "Content-Type,X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5,  Date, X-Api-Version, X-File-Name",
+    "AccessControlAllowMethods": "POST, GET, PUT, DELETE, OPTIONS",
+    "AccessControlAllowCredentials": true
+  };
+
+  /**
+   * Headers
+   */
+  res.header("Access-Control-Allow-Credentials", responseSettings.AccessControlAllowCredentials);
+  res.header("Access-Control-Allow-Origin", responseSettings.AccessControlAllowOrigin);
+  res.header("Access-Control-Allow-Headers", (req.headers['access-control-request-headers']) ? req.headers['access-control-request-headers'] : "x-requested-with");
+  res.header("Access-Control-Allow-Methods", (req.headers['access-control-request-method']) ? req.headers['access-control-request-method'] : responseSettings.AccessControlAllowMethods);
+
+  if ('OPTIONS' == req.method) {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+require('./server/config/mongoose.js');
+var User = mongoose.model('User');
+
 function verifyCredentials(username, password, done) {
   //pretend this is using a real database
   //checkout express crypto
-  if (username === password) {
-    done(null, {
-      id: username,
-      name: username
-    });
-  } else {
-    done(null, null);
-  }
+  User.findOne({
+    email: username
+  }, function(err, user) {
+    if (err) {
+      return done(err);
+    }
+    if (!user) {
+      return done(null, false);
+    }
+    if (user.password !== password) {
+      return done(null, false);
+    }
+    return done(null, user);
+  });
 }
 
 passport.serializeUser(function(user, done) {
@@ -90,6 +129,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
   // query database or cache here
+  console.log('deserialize?');
   done(null, {
     id: id,
     name: id
@@ -98,6 +138,7 @@ passport.deserializeUser(function(id, done) {
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
+    console.log("Definitely authenticated");
     next();
   } else {
     res.send(403);
@@ -135,28 +176,28 @@ app.get('/logout', function(req, res) {
 //     failureRedirect: '/login'
 //   }));
 
-// app.use('/api', passport.authenticate('basic', {
-//   session: false
-// }));
+app.use('/api', passport.authenticate('basic', {
+  session: false
+}));
 
 
-// app.get('/api/data', ensureAuthenticated, function(req, res) {
-//   res.json([{
-//     value: 'foo'
-//   }, {
-//     value: 'bar'
-//   }, {
-//     value: 'baz'
-//   }]);
-// });
+app.get('/api/data', ensureAuthenticated, function(req, res) {
+  res.json([{
+    value: 'foo'
+  }, {
+    value: 'bar'
+  }, {
+    value: 'baz'
+  }]);
+});
 
-require('./server/config/mongoose.js');
+
 
 var route_setter = require('./server/config/routes');
 route_setter(app);
 
 var port = process.env.PORT || 1337;
 
-app.listen(port, function() {
+server.listen(port, function() {
   console.log('http://127.0.0.1:' + port + '/');
 });
