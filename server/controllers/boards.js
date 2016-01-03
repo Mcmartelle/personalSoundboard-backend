@@ -40,7 +40,7 @@ module.exports = {
       var board = new Board(req.body);
 
       board._user = user._id;
-      post.boards.push(board);
+      user.boards.push(board);
 
       board.save(function(err) {
         user.save(function(err) {
