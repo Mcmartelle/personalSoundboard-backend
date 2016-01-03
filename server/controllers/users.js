@@ -17,8 +17,8 @@ module.exports = {
   },
 
   readOne: function(req, res) {
-    Person.findOne({
-      name: req.params.name
+    User.findOne({
+      email: req.params.id
     }, function(err, person) {
       if (err) {
         console.log("oh no.");
@@ -58,13 +58,13 @@ module.exports = {
   },
 
   removeAll: function(req, res) {
-    console.log("User.updatePartial");
+    console.log("User.removeAll");
     res.json({});
   },
 
   removeOne: function(req, res) {
-    Person.remove({
-      name: req.params.name
+    User.remove({
+      email: req.params.id
     }, function(err, person) {
       if (err) {
         console.log("Oh noooo!");
@@ -75,4 +75,6 @@ module.exports = {
       }
     });
   }
+
 }
+

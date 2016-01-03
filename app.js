@@ -158,6 +158,7 @@ app.get('/login', function(req, res) {
 
 app.post('/login', passport.authenticate('local'), function(req, res) {
   console.log("the angular request got to login");
+  console.log(req.body);
   res.json({
     message: "Success"
   });

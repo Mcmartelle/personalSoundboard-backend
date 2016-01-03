@@ -4,52 +4,68 @@ var Sound = mongoose.model('Sound');
 module.exports = {
 
   readAll: function(req, res) {
-    Person.find({}, function(err, persons) {
+    User.findOne({
+      email: req.params.id
+    }).populate('boards').exec(function(err, user) {
       if (err) {
         console.log("we got trouble");
         res.json(err);
       } else {
-        console.log("in readAll method");
-        res.json(persons);
-      }
-    });
-  },
-
-  create: function(req, res) {
-    console.log("POST DATA:", req.params.name);
-    //might want to validate here
-    var person = new Person({
-      name: req.params.name
-    });
-    person.save(function(err) {
-      if (err) {
-        console.log('whooops');
-        res.json(err);
-      } else {
-        console.log("in create method")
-        res.json({});
+        console.log("Users.readAll");
+        res.json(user);
       }
     });
   },
 
   readOne: function(req, res) {
-    Person.find({
-      name: req.params.name
+    User.findOne({
+      email: req.params.id
     }, function(err, person) {
       if (err) {
         console.log("oh no.");
         res.json(err);
       } else {
-        console.log("Found data for: " + req.params.name)
-        console.log(person);
         res.json(person);
       }
     });
   },
 
-  destroy: function(req, res) {
-    Person.remove({
-      name: req.params.name
+  create: function(req, res) {
+    console.log("create...req.body:", req.body);
+
+    var user = new User(req.body);
+    user.save(function(err) {
+      if (err) {
+        console.log('whooops');
+        res.json(err);
+      } else {
+        console.log("users.create")
+        res.json({
+          message: "user created"
+        });
+      }
+    });
+
+  },
+
+  update: function(req, res) {
+    console.log("User.update");
+    res.json({});
+  },
+
+  updatePartial: function(req, res) {
+    console.log("User.updatePartial");
+    res.json({});
+  },
+
+  removeAll: function(req, res) {
+    console.log("User.removeAll");
+    res.json({});
+  },
+
+  removeOne: function(req, res) {
+    User.remove({
+      email: req.params.id
     }, function(err, person) {
       if (err) {
         console.log("Oh noooo!");
@@ -60,4 +76,5 @@ module.exports = {
       }
     });
   }
+
 }

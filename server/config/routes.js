@@ -21,20 +21,23 @@ module.exports = function(app) {
   app.delete('/api/users/', usersController.removeAll);
   app.delete('/api/users/:id/', usersController.removeOne);
 
-  // app.get('/api/users/:id/boards/', boardsController.readAll);
-  // app.get('/api/users/:id/boards/:bid/', boardsController.readOne);
-  // app.post('/api/users/:id/boards/', boardsController.create);
-  // app.put('/api/users/:id/boards/:bid/', boardsController.update);
-  // app.patch('/api/users/:id/boards/:bid/', boardsController.updatePartial);
-  // app.delete('/api/users/:id/boards/', boardsController.removeAll);
-  // app.delete('/api/users/:id/boards/:bid/', boardsController.removeOne);
+  app.get('/api/users/:id/boards/', boardsController.readAll);
+  app.get('/api/users/:id/boards/:bid/', boardsController.readOne);
+  app.post('/api/users/:id/boards/', boardsController.create);
+  app.put('/api/users/:id/boards/:bid/', boardsController.update);
+  app.patch('/api/users/:id/boards/:bid/', boardsController.updatePartial);
+  app.delete('/api/users/:id/boards/', boardsController.removeAll);
+  app.delete('/api/users/:id/boards/:bid/', boardsController.removeOne);
 
-  // app.get('/api/users/:id/boards/:bid/sounds/', soundsController.readAll);
-  // app.get('/api/users/:id/boards/:bid/sounds/:sid', soundsController.readOne);
-  // app.post('/api/users/:id/boards/:bid/sounds/', soundsController.create);
-  // app.put('/api/users/:id/boards/:bid/sounds/:sid', soundsController.update);
-  // app.patch('/api/users/:id/boards/:bid/sounds/:sid', soundsController.updatePartial);
-  // app.delete('/api/users/:id/boards/:bid/sounds/', soundsController.removeAll);
-  // app.delete('/api/users/:id/boards/:bid/sounds/:sid', soundsController.removeOne);
+  app.get('/api/users/:id/boards/:bid/sounds/', soundsController.readAll);
+  app.get('/api/users/:id/boards/:bid/sounds/:sid', soundsController.readOne);
+  app.post('/api/users/:id/boards/:bid/sounds/', soundsController.create);
+  app.put('/api/users/:id/boards/:bid/sounds/:sid', soundsController.update);
+  app.patch('/api/users/:id/boards/:bid/sounds/:sid', soundsController.updatePartial);
+  app.delete('/api/users/:id/boards/:bid/sounds/', soundsController.removeAll);
+  app.delete('/api/users/:id/boards/:bid/sounds/:sid', soundsController.removeOne);
+
+
+
 
 }

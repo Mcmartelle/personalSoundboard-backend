@@ -1,55 +1,82 @@
 var mongoose = require('mongoose');
+var User = mongoose.model('User');
 var Board = mongoose.model('Board');
 
 module.exports = {
 
   readAll: function(req, res) {
-    Person.find({}, function(err, persons) {
+    User.findOne({
+      email: req.params.id
+    }).populate('boards').exec(function(err, user) {
       if (err) {
         console.log("we got trouble");
         res.json(err);
       } else {
-        console.log("in readAll method");
-        res.json(persons);
-      }
-    });
-  },
-
-  create: function(req, res) {
-    console.log("POST DATA:", req.params.name);
-    //might want to validate here
-    var person = new Person({
-      name: req.params.name
-    });
-    person.save(function(err) {
-      if (err) {
-        console.log('whooops');
-        res.json(err);
-      } else {
-        console.log("in create method")
-        res.json({});
+        console.log("Users.readAll");
+        res.json(user.boards);
       }
     });
   },
 
   readOne: function(req, res) {
-    Person.find({
-      name: req.params.name
+    User.findOne({
+      email: req.params.id
     }, function(err, person) {
       if (err) {
         console.log("oh no.");
         res.json(err);
       } else {
-        console.log("Found data for: " + req.params.name)
-        console.log(person);
         res.json(person);
       }
     });
   },
 
-  destroy: function(req, res) {
-    Person.remove({
-      name: req.params.name
+  create: function(req, res) {
+    console.log("create...req.body:", req.body);
+    User.findOne({
+      email: req.params.id
+    }, function(err, user) {
+
+      var board = new Board(req.body);
+
+      board._user = user._id;
+      post.boards.push(board);
+
+      board.save(function(err) {
+        user.save(function(err) {
+          if (err) {
+            console.log('whooops');
+            res.json(err);
+          } else {
+            console.log("boards.create")
+            res.json({
+              message: "board created"
+            });
+          }
+        });
+      });
+    });
+
+  },
+
+  update: function(req, res) {
+    console.log("User.update");
+    res.json({});
+  },
+
+  updatePartial: function(req, res) {
+    console.log("User.updatePartial");
+    res.json({});
+  },
+
+  removeAll: function(req, res) {
+    console.log("User.removeAll");
+    res.json({});
+  },
+
+  removeOne: function(req, res) {
+    User.remove({
+      email: req.params.id
     }, function(err, person) {
       if (err) {
         console.log("Oh noooo!");
@@ -60,4 +87,5 @@ module.exports = {
       }
     });
   }
+
 }

@@ -6,8 +6,15 @@ var BoardSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  title: String,
-  position: Number,
+  title: {
+    type: String,
+    required: true
+  },
+  position: {
+    type: Number,
+    required: true,
+    unique: true
+  },
   sounds: [{
     type: Schema.Types.ObjectId,
     ref: 'Sound'
