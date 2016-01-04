@@ -1,5 +1,28 @@
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+
+var SoundSchema = new mongoose.Schema({
+  position: Number,
+  accent: String,
+  speaktext: String,
+  options: {
+    pitch: Number,
+    rate: Number,
+    volume: Number
+  }
+});
+
+var BoardSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  position: {
+    type: Number,
+    required: true,
+    unique: true
+  },
+  sounds: [SoundSchema]
+});
 
 var UserSchema = new mongoose.Schema({
   email: {
@@ -15,14 +38,7 @@ var UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  boards: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Board'
-  }]
+  boards: [BoardSchema]
 });
-
-// UserSchema.path('email').required(true, 'User email cannot be blank');
-// UserSchema.path('first_name').required(true, 'User name cannot be blank');
-// UserSchema.path('password').required(true, 'User password cannot be blank');
 
 var User = mongoose.model("User", UserSchema);

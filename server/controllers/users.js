@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
-
 module.exports = {
 
   readAll: function(req, res) {
@@ -19,12 +18,13 @@ module.exports = {
   readOne: function(req, res) {
     User.findOne({
       email: req.params.id
-    }, function(err, person) {
+    }, function(err, user) {
       if (err) {
-        console.log("oh no.");
+        console.log("we got trouble");
         res.json(err);
       } else {
-        res.json(person);
+        console.log("Users.readOne");
+        res.json(user);
       }
     });
   },
@@ -38,7 +38,7 @@ module.exports = {
         console.log('whooops');
         res.json(err);
       } else {
-        console.log("users.create")
+        console.log("users.create");
         res.json({
           message: "user created"
         });
@@ -48,6 +48,33 @@ module.exports = {
   },
 
   update: function(req, res) {
+    console.log(req.body);
+    User.findOne({
+      email: req.params.id
+    }, function(err, user) {
+      if (err) {
+        console.log('whooops');
+        res.json(err);
+      } else {
+        // for (idx in req.body.boards) {
+        //   user.boards.push(req.body.boards[idx]);
+        // }
+        user.boards = req.body.boards;
+        console.log("users.update");
+        user.save(function(err) {
+          if (err) {
+            console.log('whooops');
+            res.json(err);
+          } else {
+            console.log('boards added');
+          }
+        });
+      }
+    });
+
+
+
+
     console.log("User.update");
     res.json({});
   },
@@ -77,4 +104,3 @@ module.exports = {
   }
 
 }
-
